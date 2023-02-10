@@ -27,9 +27,8 @@ class FlutterBlueApp extends StatelessWidget {
           initialData: BluetoothState.unknown,
           builder: (c, snapshot) {
             final state = snapshot.data;
-            if (state == BluetoothState.on) {
-              return const FindDevicesScreen();
-            }
+            if (state == BluetoothState.on || state == BluetoothState.turningOn || state == BluetoothState.unknown)
+            { return const FindDevicesScreen(); }
             return BluetoothOffScreen(state: state);
           }),
     );
@@ -201,7 +200,8 @@ class DeviceScreen extends StatelessWidget {
                     characteristic: c,
                     onReadPressed: () => c.read(),
                     onWritePressed: () async {
-                      await c.write(_getRandomBytes(), withoutResponse: true);
+                      // await c.write(_getRandomBytes(), withoutResponse: true);
+                      await c.write([0x02], withoutResponse: true);
                       await c.read();
                     },
                     onNotificationPressed: () async {
@@ -213,7 +213,8 @@ class DeviceScreen extends StatelessWidget {
                           (d) => DescriptorTile(
                             descriptor: d,
                             onReadPressed: () => d.read(),
-                            onWritePressed: () => d.write(_getRandomBytes()),
+                            // onWritePressed: () => d.write(_getRandomBytes()),
+                            onWritePressed: () => d.write([0x03]),
                           ),
                         )
                         .toList(),
